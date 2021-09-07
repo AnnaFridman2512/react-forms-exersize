@@ -1,24 +1,39 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, {useState} from "react";
+import {useForm} from "react-hook-form";
+
 
 
 export default function CreditCardValidation() {
     const { register, formState: { errors }  , handleSubmit } = useForm();
-    const onSubmit = data => console.log(data);//you can see the data from the input printed to the console
+    const [cards, setCards]= useState();
+
+
+
     const date = new Date();
     const [month, year]       = [date.getMonth(), date.getFullYear()];
-    let today = `${month}/${year}`;
-    //console.log(today);
 
-  
+
+    const onSubmit =(e)=> {//console.log(data);//you can see the data from the input printed to the console
+          
+      fetch(`https://retoolapi.dev/K0Rs6n/validatecreditcard?number=${cards.CardNumber.value};`)
+          .then(response => response.json())
+          .then(data => setCards(data))
+          .then(cards => console.log(cards))
+          .then(alert('Submitted successfully'))
+          .then(e.target.reset())
+          .catch(error => alert('Form submit error', error))
+    };
+
+
     return (
-      <>
-      <h1>Credit card validation Homework</h1>
+      <div style={{background:"deeppink", width:"fit-content" }}>
+      <h1 style={{color: "white", padding:"10px"}}>Credit card validation Homework</h1>
        {/*"handleSubmit" will validate your inputs before invoking "onSubmit"*/ }
       <form onSubmit={handleSubmit(onSubmit)}>
           <div>Enter Card-Number
        {/* include validation with required or other standard HTML validation rules */}
-       <input {...register("CardNumber", { 
+       <input 
+        {...register("CardNumber", { 
          required: true,
          minLength: 8,
          pattern: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/
@@ -32,11 +47,22 @@ export default function CreditCardValidation() {
         <p>Enter valid card number</p>
       )}
       </div>
-      <div>Enter Expiry-Date<input {...register("ExpiryDate", { 
+      <div>Enter Expiry-Date<input
+       {...register("ExpiryDate", { 
         required: true,
-        pattern:/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{4})$/,
-        validate: date => date >= today
-      })}
+       pattern:/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{4})$/,
+       validate: value => {
+        let date = value.toString().split("/");
+        let expMonth = date[0];
+        let expYear = date[1];
+        if(expMonth >= month && expYear >= year){
+          return true;
+        }else{
+          return false;
+        }
+      }
+       }
+       )}
       />
       {errors?.ExpiryDate?.type === "required" && <p>This field is required</p>}
       {errors?.ExpiryDate?.type === "pattern" && (
@@ -47,7 +73,8 @@ export default function CreditCardValidation() {
       )}
       </div>
    
-      <div>Enter CVV <input {...register("CVV", { 
+      <div>Enter CVV <input
+       {...register("CVV", { 
         required: true,
         minLength:3,
         maxLength:4,
@@ -67,10 +94,9 @@ export default function CreditCardValidation() {
       </div>
       <input type="submit" />
       </form>
-      </>
+      </div>
     );
-  }
-
+        }
   /**4242424242424242 Visa
 4000056655665556 Visa (debit)
 5555555555554444 Mastercard
