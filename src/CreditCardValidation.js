@@ -7,24 +7,22 @@ export default function CreditCardValidation() {
     const { register, formState: { errors }  , handleSubmit } = useForm();
     const [cards, setCards]= useState();
 
-
-
     const date = new Date();
     const [month, year]       = [date.getMonth(), date.getFullYear()];
 
 
-    const onSubmit =(e)=> {//console.log(data);//you can see the data from the input printed to the console
+    const onSubmit = cardObj => {//console.log(data);//you can see the data from the input printed to the console
           
-      fetch(`https://retoolapi.dev/K0Rs6n/validatecreditcard?number=${cards.CardNumber.value};`)
+     try{
+       fetch(`https://retoolapi.dev/K0Rs6n/validatecreditcard?namber=${cardObj.CardNumber}`)
           .then(response => response.json())
           .then(data => setCards(data))
-          .then(cards => console.log(cards))
-          .then(alert('Submitted successfully'))
-          .then(e.target.reset())
-          .catch(error => alert('Form submit error', error))
-    };
-
-
+          .then(console.log(cards))
+          .then(console.log("Card is valid"))
+        } catch(err){
+          console.log.error(err)
+        }}     
+        
     return (
       <div style={{background:"deeppink", width:"fit-content" }}>
       <h1 style={{color: "white", padding:"10px"}}>Credit card validation Homework</h1>
@@ -55,13 +53,12 @@ export default function CreditCardValidation() {
         let date = value.toString().split("/");
         let expMonth = date[0];
         let expYear = date[1];
-        if(expMonth >= month && expYear >= year){
+        if(expYear > year || (expMonth > month || expMonth <= month)){
           return true;
         }else{
           return false;
         }
-      }
-       }
+      }}
        )}
       />
       {errors?.ExpiryDate?.type === "required" && <p>This field is required</p>}
@@ -95,8 +92,9 @@ export default function CreditCardValidation() {
       <input type="submit" />
       </form>
       </div>
-    );
-        }
+          );
+    }
+      
   /**4242424242424242 Visa
 4000056655665556 Visa (debit)
 5555555555554444 Mastercard
