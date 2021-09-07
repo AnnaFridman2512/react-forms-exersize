@@ -5,8 +5,10 @@ import { useForm } from "react-hook-form";
 export default function CreditCardValidation() {
     const { register, formState: { errors }  , handleSubmit } = useForm();
     const onSubmit = data => console.log(data);//you can see the data from the input printed to the console
-
-    
+    const date = new Date();
+    const [month, year]       = [date.getMonth(), date.getFullYear()];
+    let today = `${month}/${year}`;
+    //console.log(today);
 
   
     return (
@@ -32,19 +34,23 @@ export default function CreditCardValidation() {
       </div>
       <div>Enter Expiry-Date<input {...register("ExpiryDate", { 
         required: true,
-        pattern:/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/
+        pattern:/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{4})$/,
+        validate: date => date >= today
       })}
       />
       {errors?.ExpiryDate?.type === "required" && <p>This field is required</p>}
       {errors?.ExpiryDate?.type === "pattern" && (
-        <p>Enter valid expiration date: dd/yy</p>
+        <p>Enter valid expiration date: dd/yyyy</p>
+      )}
+      {errors?.ExpiryDate?.type === "validate" && (
+        <p>Expiration date should be a date in the future</p>
       )}
       </div>
    
       <div>Enter CVV <input {...register("CVV", { 
         required: true,
         minLength:3,
-        maxLength:3,
+        maxLength:4,
         pattern:/^[0-9]*$/
          })} 
          />
@@ -53,7 +59,7 @@ export default function CreditCardValidation() {
         <p>Enter at least 3 numbers</p>
       )}
         {errors?.CVV?.type === "maxLength" && (
-        <p>Enter maximum 3 numbers</p>
+        <p>Enter maximum 4 numbers</p>
       )}
         {errors?.CVV?.type === "pattern" && (
           <p>Numbers only!</p>
