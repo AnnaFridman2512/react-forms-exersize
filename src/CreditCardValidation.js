@@ -1,32 +1,42 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { ErrorMessage } from '@hookform/error-message';
+
 
 export default function CreditCardValidation() {
-    const { register,formState: { errors }, handleSubmit } = useForm();
+    const { register, formState: { errors }  , handleSubmit } = useForm();
     const onSubmit = data => console.log(data);//you can see the data from the input printed to the console
-  
-  
+
+    
+
   
     return (
       <>
       <h1>Credit card validation Homework</h1>
        {/*"handleSubmit" will validate your inputs before invoking "onSubmit"*/ }
       <form onSubmit={handleSubmit(onSubmit)}>
-          <div>Enter Card-Number<input {...register("Card-Number", { required: "This fiels is required." })} /></div>
-          <ErrorMessage errors={errors} name="Card-Number" />
-          <div>Enter Expiry-Date<input {...register("Expiry-Date", { required: "This field is required." })} /></div>
-          <ErrorMessage errors={errors} name="Expiry-Date" />
-          <div>Enter CVV <input {...register("CVV", { required: "This is field required." })} /></div>
-          <ErrorMessage errors={errors} name="CVV" />
+          <div>Enter Card-Number
+       {/* include validation with required or other standard HTML validation rules */}
+       <input {...register("CardNumber", { 
+         required: true,
+         minLength: 8,
+         pattern: /^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$/
+          })} 
+          />
+      {errors?.CardNumber?.type === "required" && <p>This field is required</p>}
+      {errors?.CardNumber?.type === "minLength" && (
+        <p>Enter at least 8 numbers</p>
+      )}
+      {errors?.CardNumber?.type === "pattern" && (
+        <p>Enter valid card number</p>
+      )}
+      </div>
+         {/* <div>Enter Expiry-Date<input {...register("Expiry-Date") { required: "Enter Expiry-Date", pattern:'' }/></div>**/}
+   
+          {/*<div>Enter CVV <input {...register("CVV", { required: "This is field required!" })} /></div>*/}
+  
           
           
           
-          <ErrorMessage
-        errors={errors}
-        name="singleErrorInput"
-        render={({ message }) => <p>{message}</p>}
-      />
 
           <input type="submit" />
       </form>
@@ -48,3 +58,4 @@ export default function CreditCardValidation() {
 36227206271667 Diners Club (14 digit card)
 3566002020360505 JCB
 6200000000000005 UnionPay*/
+
