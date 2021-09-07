@@ -30,15 +30,36 @@ export default function CreditCardValidation() {
         <p>Enter valid card number</p>
       )}
       </div>
-         {/* <div>Enter Expiry-Date<input {...register("Expiry-Date") { required: "Enter Expiry-Date", pattern:'' }/></div>**/}
+      <div>Enter Expiry-Date<input {...register("ExpiryDate", { 
+        required: true,
+        pattern:/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/
+      })}
+      />
+      {errors?.ExpiryDate?.type === "required" && <p>This field is required</p>}
+      {errors?.ExpiryDate?.type === "pattern" && (
+        <p>Enter valid expiration date: dd/yy</p>
+      )}
+      </div>
    
-          {/*<div>Enter CVV <input {...register("CVV", { required: "This is field required!" })} /></div>*/}
-  
-          
-          
-          
-
-          <input type="submit" />
+      <div>Enter CVV <input {...register("CVV", { 
+        required: true,
+        minLength:3,
+        maxLength:3,
+        pattern:/^[0-9]*$/
+         })} 
+         />
+         {errors?.CVV?.type === "required" && <p>This field is required</p>}
+         {errors?.CVV?.type === "minLength" && (
+        <p>Enter at least 3 numbers</p>
+      )}
+        {errors?.CVV?.type === "maxLength" && (
+        <p>Enter maximum 3 numbers</p>
+      )}
+        {errors?.CVV?.type === "pattern" && (
+          <p>Numbers only!</p>
+      )}
+      </div>
+      <input type="submit" />
       </form>
       </>
     );
